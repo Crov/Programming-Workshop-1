@@ -27,7 +27,22 @@ public class HomeController {
         }
     }
     @FXML protected void openBooks() {
-        System.out.println("Opening Books Management...");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("book.fxml"));
+
+            Scene scene = new Scene(loader.load(), 900, 600);
+
+            Stage stage = new Stage();
+            stage.setMaximized(true);
+            stage.setScene(scene);
+            stage.setTitle("Book Management");
+            stage.show();
+
+            Stage homeStage = (Stage) welcomeLabel.getScene().getWindow();
+            homeStage.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     @FXML protected void openEmployees() {
         try {
@@ -36,6 +51,9 @@ public class HomeController {
             employeeStage.setTitle("Manage Employees");
             employeeStage.setScene(new Scene(loader.load(), 900, 600));
             employeeStage.show();
+
+            Stage homeStage = (Stage) welcomeLabel.getScene().getWindow();
+            homeStage.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

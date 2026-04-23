@@ -60,4 +60,10 @@ public class Book {
 
     public String getDescription() {return description.get();}
     public void setDescription(String description) {this.description.set(description);}
+
+    public SimpleStringProperty isbnProperty() { return isbn; }
+    public SimpleStringProperty titleProperty() { return title; }
+    public SimpleStringProperty authorProperty() { return author; }
+    public SimpleStringProperty ageGroupProperty() { return ageGroup; }
+    public SimpleDoubleProperty ratingProperty() { return rating; }
 }

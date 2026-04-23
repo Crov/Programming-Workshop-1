@@ -52,16 +52,12 @@ public class LoginController {
             HomeController controller = loader.getController();
             controller.setupAccess(username);
 
-            Stage homeStage = new Stage();
-            Scene scene = new Scene(root, 600, 400);
-            homeStage.setTitle("Home Page");
-            homeStage.setResizable(true);
-            homeStage.setMaximized(true);
-            homeStage.setScene(scene);
-            homeStage.show();
-
-            Stage loginStage = (Stage) usernameField.getScene().getWindow();
-            loginStage.close();
+            Stage stage = (Stage) loginText.getScene().getWindow();
+            Scene scene = new Scene(root, 1200, 700);
+            stage.setTitle("Home Page");
+            stage.setResizable(true);
+            stage.setScene(scene);
+            stage.centerOnScreen();
 
         } catch (IOException e) {
             e.printStackTrace();
