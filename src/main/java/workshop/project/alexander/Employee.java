@@ -1,4 +1,4 @@
-package workshop.project;
+package workshop.project.alexander;
 
 public class Employee {
     private String name, email, dob, gender, department, salary, phone, fulltime;

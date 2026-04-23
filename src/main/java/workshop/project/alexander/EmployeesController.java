@@ -1,4 +1,4 @@
-package workshop.project;
+package workshop.project.alexander;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
