@@ -51,6 +51,9 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("home.fxml"));
             Parent root = loader.load();
 
+            HomeController controller = loader.getController();
+            controller.setupAccess(username);
+
             Stage homeStage = new Stage();
             Scene scene = new Scene(root, 600, 400);
             homeStage.setTitle("Home Page");
@@ -61,6 +64,7 @@ public class LoginController {
 
             Stage loginStage = (Stage) usernameField.getScene().getWindow();
             loginStage.close();
+
         } catch (IOException e) {
             e.printStackTrace();
             loginText.setText("Error: Couldn't load Home Page");
