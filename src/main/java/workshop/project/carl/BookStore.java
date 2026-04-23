@@ -1,4 +1,4 @@
-package workshop.project.library.carl;
+package workshop.project.carl;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,8 +26,8 @@ public class BookStore {
         }
     }
 
-    public void updatePerson(Book book, String isbn, String title, String author,LocalDate releaseDate,
-                             Genre genre, String ageGroup, double rating, boolean inStock) {
+    public void updateBook(Book book, String isbn, String title, String author,LocalDate releaseDate,
+                             Genre genre, String ageGroup, double rating, boolean inStock, String description) {
         if (book != null) {
             book.setIsbn(isbn);
             book.setTitle(title);
@@ -37,6 +37,7 @@ public class BookStore {
             book.setAgeGroup(ageGroup);
             book.setRating(rating);
             book.setInStock(inStock);
+            book.setDescription(description);
         }
     }
 }

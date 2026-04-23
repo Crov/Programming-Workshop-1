@@ -1,4 +1,4 @@
-package workshop.project.library.carl;
+package workshop.project.carl;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -19,9 +19,10 @@ public class Book {
     private SimpleStringProperty ageGroup;
     private SimpleDoubleProperty rating;
     private SimpleBooleanProperty inStock;
+    private SimpleStringProperty description;
 
     public Book(String isbn, String title, String author, LocalDate releaseDate, Genre genre,
-                String ageGroup, double rating, boolean inStock) {
+                String ageGroup, double rating, boolean inStock, String description) {
         this.isbn = new SimpleStringProperty(isbn);
         this.title = new SimpleStringProperty(title);
         this.author = new SimpleStringProperty(author);
@@ -30,6 +31,7 @@ public class Book {
         this.ageGroup = new SimpleStringProperty(ageGroup);
         this.rating = new SimpleDoubleProperty(rating);
         this.inStock = new SimpleBooleanProperty(inStock);
+        this.description = new SimpleStringProperty(description);
     }
 
     public String getIsbn() {return isbn.get();}
@@ -55,4 +57,7 @@ public class Book {
 
     public boolean isInStock() {return inStock.get();}
     public void setInStock(boolean inStock) {this.inStock.set(inStock);}
+
+    public String getDescription() {return description.get();}
+    public void setDescription(String description) {this.description.set(description);}
 }
