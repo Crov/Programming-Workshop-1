@@ -6,8 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.time.LocalDate;
-
 
 public class BookController {
 
@@ -63,7 +61,7 @@ public class BookController {
     private Button updateBtn;
 
     @FXML
-    private CheckBox stockBox;
+    private CheckBox StockBox;
 
     @FXML private RadioButton age1;
     @FXML private RadioButton age2;
@@ -85,8 +83,6 @@ public class BookController {
         GenreCol.setCellValueFactory(new PropertyValueFactory<>("genre"));
         RatingCol.setCellValueFactory(new PropertyValueFactory<>("rating"));
 
-        bookStore.addBook(new Book("9780152023980", "The Little Prince", "Antoine de Saint-Exupéry", LocalDate.parse("1943-04-06"), Genre.Fantasy, "5-8", 5.0, true, "A pilot stranded in the desert meets a mysterious young boy who calls himself the Little Prince. As the boy shares stories of his travels from planet to planet, he reveals simple yet profound truths about friendship, love, loneliness, and what truly matters in life. Through their encounter, the pilot comes to see the world through the eyes of a child—and learns that what is essential is invisible to the eye."));
-        bookStore.addBook(new Book("9780062315007", "The Alchemist", "Paulo Coelho", LocalDate.parse("1993-05-01"), Genre.Fantasy, "13-18", 3.92, true, "The Alchemist follows Santiago, a young Andalusian shepherd who repeatedly dreams of a hidden treasure buried near the Egyptian pyramids. Motivated by this vision, he leaves Spain and embarks on a journey across North Africa in search of his “Personal Legend” — his life’s true purpose.\nAlong the way, he encounters a series of figures who shape his understanding of the world, including a king, a crystal merchant, an Englishman studying alchemy, and an alchemist. Through these encounters, Santiago learns to interpret the language of the world, trust his intuition, and recognize that the journey itself is as meaningful as the destination.\nAt its core, the story explores themes of destiny, spirituality, and self-discovery, emphasizing that when a person truly wants something, the universe conspires to help them achieve it."));
         table.setItems(bookStore.getBooksList());
 
         GenreFld.setItems(FXCollections.observableArrayList(Genre.values()));
@@ -115,6 +111,7 @@ public class BookController {
                 DescriptionFld.setText(selectedBook.getDescription());
                 GenreFld.setValue(selectedBook.getGenre());
                 RatingFld.getValueFactory().setValue(selectedBook.getRating());
+                StockBox.setSelected(selectedBook.isInStock());
 
                 switch(selectedBook.getAgeGroup()) {
                     case "0-4" -> ageGroup.selectToggle(age1);
@@ -139,7 +136,7 @@ public class BookController {
                 GenreFld.getValue(),
                 age,
                 RatingFld.getValue(),
-                stockBox.isSelected(),
+                StockBox.isSelected(),
                 DescriptionFld.getText()
         );
 
@@ -174,10 +171,11 @@ public class BookController {
                     GenreFld.getValue(),
                     age,
                     RatingFld.getValue(),
-                    stockBox.isSelected(),
+                    StockBox.isSelected(),
                     DescriptionFld.getText()
             );
 
+            clearFields();
             table.refresh();
         }
     }
@@ -193,6 +191,6 @@ public class BookController {
         RatingFld.getValueFactory().setValue(0.0);
         ageGroup.selectToggle(age1);
         selectedBook = null;
-        stockBox.setSelected(false);
+        StockBox.setSelected(false);
     }
 }
