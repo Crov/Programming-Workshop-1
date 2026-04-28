@@ -107,7 +107,7 @@ public class EmployeesController {
             Parent root = loader.load();
 
             HomeController controller = loader.getController();
-            controller.setupAccess("Alex");
+            controller.setupAccess("Alexander");
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 1200, 700);
