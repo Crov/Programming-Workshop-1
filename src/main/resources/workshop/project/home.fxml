@@ -21,15 +21,26 @@
                 <Font name="Segoe UI" size="14.0" />
             </font>
         </Label>
+
         <Button fx:id="booksButton" mnemonicParsing="false" onAction="#openBooks" prefHeight="40.0" prefWidth="200.0" text="Manage Books">
-                <font>
-                    <Font name="Segoe UI" size="14.0" />
-                </font>
+            <font>
+                <Font name="Segoe UI" size="14.0" />
+            </font>
         </Button>
+
         <Button fx:id="employeesButton" mnemonicParsing="false" onAction="#openEmployees" prefHeight="40.0" prefWidth="200.0" text="Manage Employees">
             <font>
                 <Font name="Segoe UI" size="14.0" />
             </font>
+        </Button>
+
+        <Button mnemonicParsing="false" onAction="#logout" prefHeight="30.0" prefWidth="100.0" style="-fx-text-fill: #d32f2f;" text="Logout">
+            <font>
+                <Font name="Segoe UI Bold" size="14.0" />
+            </font>
+            <VBox.margin>
+                <Insets top="30.0" />
+            </VBox.margin>
         </Button>
     </children>
 </VBox>

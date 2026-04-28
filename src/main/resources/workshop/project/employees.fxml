@@ -23,6 +23,13 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
+        <HBox alignment="CENTER_LEFT" prefWidth="910.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#goBackToHome" style="-fx-background-color: #e0e0e0;" text="← Back to Dashboard">
+                    <font><Font name="Segoe UI" size="13.0" /></font>
+                </Button>
+            </children>
+        </HBox>
         <Label text="Employee Management">
             <font>
                 <Font name="Segoe UI Bold" size="24.0" />

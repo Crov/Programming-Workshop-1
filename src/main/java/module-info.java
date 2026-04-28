@@ -6,6 +6,6 @@ module workshop.project.project {
     opens workshop.project to javafx.fxml;
     exports workshop.project;
     exports workshop.project.alexander;
-    opens workshop.project.alexander to javafx.fxml;
+    opens workshop.project.alexander to javafx.fxml, javafx.base;
     opens workshop.project.carl to javafx.fxml, javafx.base;
 }

@@ -1,18 +1,57 @@
 package workshop.project.alexander;
 
+import javafx.beans.property.SimpleStringProperty;
+
 public class Employee {
-    private String name, email, dob, gender, department, salary, phone, fulltime;
+    private final SimpleStringProperty name;
+    private final SimpleStringProperty email;
+    private final SimpleStringProperty dob;
+    private final SimpleStringProperty gender;
+    private final SimpleStringProperty department;
+    private final SimpleStringProperty salary;
+    private final SimpleStringProperty phone;
+    private final SimpleStringProperty fulltime;
 
     public Employee(String name, String email, String dob, String gender, String department, String salary, String phone, String fulltime) {
-        this.name = name; this.email = email; this.dob = dob; this.gender = gender;
-        this.department = department; this.salary = salary; this.phone = phone; this.fulltime = fulltime;
+        this.name = new SimpleStringProperty(name);
+        this.email = new SimpleStringProperty(email);
+        this.dob = new SimpleStringProperty(dob);
+        this.gender = new SimpleStringProperty(gender);
+        this.department = new SimpleStringProperty(department);
+        this.salary = new SimpleStringProperty(salary);
+        this.phone = new SimpleStringProperty(phone);
+        this.fulltime = new SimpleStringProperty(fulltime);
     }
-    public String getName() { return name; } public void setName(String name) { this.name = name; }
-    public String getEmail() { return email; } public void setEmail(String email) { this.email = email; }
-    public String getDob() { return dob; } public void setDob(String dob) { this.dob = dob; }
-    public String getGender() { return gender; } public void setGender(String gender) { this.gender = gender; }
-    public String getDepartment() { return department; } public void setDepartment(String department) { this.department = department; }
-    public String getSalary() { return salary; } public void setSalary(String salary) { this.salary = salary; }
-    public String getPhone() { return phone; } public void setPhone(String phone) { this.phone = phone; }
-    public String getFulltime() { return fulltime; } public void setFulltime(String fulltime) { this.fulltime = fulltime; }
+
+    public String getName() { return name.get(); }
+    public void setName(String name) { this.name.set(name); }
+    public SimpleStringProperty nameProperty() { return name; }
+
+    public String getEmail() { return email.get(); }
+    public void setEmail(String email) { this.email.set(email); }
+    public SimpleStringProperty emailProperty() { return email; }
+
+    public String getDob() { return dob.get(); }
+    public void setDob(String dob) { this.dob.set(dob); }
+    public SimpleStringProperty dobProperty() { return dob; }
+
+    public String getGender() { return gender.get(); }
+    public void setGender(String gender) { this.gender.set(gender); }
+    public SimpleStringProperty genderProperty() { return gender; }
+
+    public String getDepartment() { return department.get(); }
+    public void setDepartment(String department) { this.department.set(department); }
+    public SimpleStringProperty departmentProperty() { return department; }
+
+    public String getSalary() { return salary.get(); }
+    public void setSalary(String salary) { this.salary.set(salary); }
+    public SimpleStringProperty salaryProperty() { return salary; }
+
+    public String getPhone() { return phone.get(); }
+    public void setPhone(String phone) { this.phone.set(phone); }
+    public SimpleStringProperty phoneProperty() { return phone; }
+
+    public String getFulltime() { return fulltime.get(); }
+    public void setFulltime(String fulltime) { this.fulltime.set(fulltime); }
+    public SimpleStringProperty fulltimeProperty() { return fulltime; }
 }

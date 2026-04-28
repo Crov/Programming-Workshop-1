@@ -2,7 +2,10 @@ package workshop.project;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -21,7 +24,7 @@ public class HomeController {
         if (username.equals("Carl")) {
             booksButton.setDisable(false);
             employeesButton.setDisable(true);
-        } else if (username.equals("Alex")) {
+        } else if (username.equals("Alexander")) {
             booksButton.setDisable(true);
             employeesButton.setDisable(false);
         }
@@ -54,6 +57,23 @@ public class HomeController {
 
             Stage homeStage = (Stage) welcomeLabel.getScene().getWindow();
             homeStage.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML protected void logout(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            Scene scene = new Scene(root, 350, 400);
+            stage.setTitle("Login");
+            stage.setResizable(false);
+            stage.setScene(scene);
+            stage.centerOnScreen();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
