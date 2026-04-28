@@ -17,7 +17,7 @@ public class LoginController {
     private static final Map<String, String> users = new HashMap<>();
     static {
         users.put("Carl", "123");
-        users.put("Alex", "123");
+        users.put("Alexander", "123");
     }
 
     @FXML private TextField usernameField;
