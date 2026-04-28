@@ -1,9 +1,18 @@
 package workshop.project.alexander;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import workshop.project.HomeController;
+
+import java.time.LocalDate;
 
 public class EmployeesController {
 
@@ -18,7 +27,8 @@ public class EmployeesController {
     @FXML private TableView<Employee> tableView;
     @FXML private TableColumn<Employee, String> nameCol, emailCol, dobCol, genderCol, deptCol, salaryCol, phoneCol, fulltimeCol;
 
-    @FXML public void initialize() {
+    @FXML
+    public void initialize() {
         departmentBox.getItems().addAll("IT", "HR", "Finance", "Marketing", "Operations", "Administration");
         departmentBox.getSelectionModel().selectFirst();
 
@@ -32,12 +42,14 @@ public class EmployeesController {
         fulltimeCol.setCellValueFactory(new PropertyValueFactory<>("fulltime"));
 
         tableView.setItems(EmployeesStore.getEmployees());
+
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) populateForm(newSelection);
         });
     }
 
-    @FXML void addEmployee() {
+    @FXML
+    protected void addEmployee(ActionEvent event) {
         if (!validateForm()) return;
 
         String gender = ((RadioButton) genderGroup.getSelectedToggle()).getText();
@@ -53,7 +65,8 @@ public class EmployeesController {
         showMessage("Employee added successfully!", Color.GREEN);
     }
 
-    @FXML void updateEmployee() {
+    @FXML
+    protected void updateEmployee(ActionEvent event) {
         Employee selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showMessage("Select an employee to update", Color.RED);
@@ -75,7 +88,8 @@ public class EmployeesController {
         showMessage("Employee updated successfully!", Color.GREEN);
     }
 
-    @FXML void deleteEmployee() {
+    @FXML
+    protected void deleteEmployee(ActionEvent event) {
         Employee selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
             EmployeesStore.getEmployees().remove(selected);
@@ -83,6 +97,25 @@ public class EmployeesController {
             showMessage("Employee deleted!", Color.GREEN);
         } else {
             showMessage("Select an employee to delete", Color.RED);
+        }
+    }
+
+    @FXML
+    protected void goBackToHome(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/workshop/project/home.fxml"));
+            Parent root = loader.load();
+
+            HomeController controller = loader.getController();
+            controller.setupAccess("Alex");
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root, 1200, 700);
+            stage.setTitle("Home Page");
+            stage.setScene(scene);
+            stage.centerOnScreen();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -99,9 +132,22 @@ public class EmployeesController {
         nameField.clear(); emailField.clear(); salaryField.clear(); phoneField.clear();
         datePicker.setValue(null); maleRadio.setSelected(true);
         departmentBox.getSelectionModel().selectFirst(); fulltimeCheckBox.setSelected(true);
+        tableView.getSelectionModel().clearSelection();
     }
 
-    private void populateForm(Employee e) { /* Logic to fill fields from selected Employee */ }
+    private void populateForm(Employee e) {
+        nameField.setText(e.getName());
+        emailField.setText(e.getEmail());
+        if (e.getDob() != null && !e.getDob().isEmpty()) {
+            datePicker.setValue(LocalDate.parse(e.getDob()));
+        }
+        if ("Male".equals(e.getGender())) maleRadio.setSelected(true);
+        else femaleRadio.setSelected(true);
+        departmentBox.setValue(e.getDepartment());
+        salaryField.setText(e.getSalary());
+        phoneField.setText(e.getPhone());
+        fulltimeCheckBox.setSelected("Yes".equals(e.getFulltime()));
+    }
 
     private void showMessage(String msg, Color color) {
         formMessage.setText(msg);
