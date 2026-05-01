@@ -27,8 +27,7 @@ public class EmployeesController {
     @FXML private TableView<Employee> tableView;
     @FXML private TableColumn<Employee, String> nameCol, emailCol, dobCol, genderCol, deptCol, salaryCol, phoneCol, fulltimeCol;
 
-    @FXML
-    public void initialize() {
+    @FXML public void initialize() {
         departmentBox.getItems().addAll("IT", "HR", "Finance", "Marketing", "Operations", "Administration");
         departmentBox.getSelectionModel().selectFirst();
 
@@ -41,15 +40,14 @@ public class EmployeesController {
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
         fulltimeCol.setCellValueFactory(new PropertyValueFactory<>("fulltime"));
 
-        tableView.setItems(EmployeesStore.getEmployees());
+        tableView.setItems(EmployeesStore.getEmployeesFromDB());
 
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) populateForm(newSelection);
         });
     }
 
-    @FXML
-    protected void addEmployee(ActionEvent event) {
+    @FXML protected void addEmployee(ActionEvent event) {
         if (!validateForm()) return;
 
         String gender = ((RadioButton) genderGroup.getSelectedToggle()).getText();
@@ -60,13 +58,14 @@ public class EmployeesController {
                 gender, departmentBox.getValue(), salaryField.getText().trim(), phoneField.getText().trim(), fulltime
         );
 
-        EmployeesStore.getEmployees().add(newEmp);
+        EmployeesStore.addEmployeeToDB(newEmp);
+        tableView.setItems(EmployeesStore.getEmployeesFromDB());
+
         clearForm();
         showMessage("Employee added successfully!", Color.GREEN);
     }
 
-    @FXML
-    protected void updateEmployee(ActionEvent event) {
+    @FXML protected void updateEmployee(ActionEvent event) {
         Employee selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showMessage("Select an employee to update", Color.RED);
@@ -83,16 +82,19 @@ public class EmployeesController {
         selected.setPhone(phoneField.getText().trim());
         selected.setFulltime(fulltimeCheckBox.isSelected() ? "Yes" : "No");
 
-        tableView.refresh();
+        EmployeesStore.updateEmployeeInDB(selected);
+        tableView.setItems(EmployeesStore.getEmployeesFromDB());
+
         clearForm();
         showMessage("Employee updated successfully!", Color.GREEN);
     }
 
-    @FXML
-    protected void deleteEmployee(ActionEvent event) {
+    @FXML protected void deleteEmployee(ActionEvent event) {
         Employee selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            EmployeesStore.getEmployees().remove(selected);
+            EmployeesStore.deleteEmployeeFromDB(selected);
+            tableView.setItems(EmployeesStore.getEmployeesFromDB());
+
             clearForm();
             showMessage("Employee deleted!", Color.GREEN);
         } else {
@@ -100,8 +102,7 @@ public class EmployeesController {
         }
     }
 
-    @FXML
-    protected void goBackToHome(ActionEvent event) {
+    @FXML protected void goBackToHome(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/workshop/project/home.fxml"));
             Parent root = loader.load();
@@ -111,7 +112,7 @@ public class EmployeesController {
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, 1200, 700);
-            stage.setTitle("Home Page");
+            stage.setTitle("Home Dashboard");
             stage.setScene(scene);
             stage.centerOnScreen();
         } catch (Exception e) {

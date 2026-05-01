@@ -3,16 +3,11 @@ package workshop.project.alexander;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Employee {
-    private final SimpleStringProperty name;
-    private final SimpleStringProperty email;
-    private final SimpleStringProperty dob;
-    private final SimpleStringProperty gender;
-    private final SimpleStringProperty department;
-    private final SimpleStringProperty salary;
-    private final SimpleStringProperty phone;
-    private final SimpleStringProperty fulltime;
+    private int id;
+    private final SimpleStringProperty name, email, dob, gender, department, salary, phone, fulltime;
 
-    public Employee(String name, String email, String dob, String gender, String department, String salary, String phone, String fulltime) {
+    public Employee(int id, String name, String email, String dob, String gender, String department, String salary, String phone, String fulltime) {
+        this.id = id;
         this.name = new SimpleStringProperty(name);
         this.email = new SimpleStringProperty(email);
         this.dob = new SimpleStringProperty(dob);
@@ -22,6 +17,13 @@ public class Employee {
         this.phone = new SimpleStringProperty(phone);
         this.fulltime = new SimpleStringProperty(fulltime);
     }
+
+    public Employee(String name, String email, String dob, String gender, String department, String salary, String phone, String fulltime) {
+        this(0, name, email, dob, gender, department, salary, phone, fulltime);
+    }
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
     public String getName() { return name.get(); }
     public void setName(String name) { this.name.set(name); }

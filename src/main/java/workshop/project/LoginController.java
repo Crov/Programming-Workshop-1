@@ -9,23 +9,18 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class LoginController {
-    private static final Map<String, String> users = new HashMap<>();
-    static {
-        users.put("Carl", "123");
-        users.put("Alexander", "123");
-    }
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Label loginText;
 
-    @FXML
-    protected void Login() {
+    @FXML protected void Login() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
@@ -34,34 +29,37 @@ public class LoginController {
             return;
         }
 
-        String user = users.get(username);
-        if (user == null) {
-            loginText.setText("Username not found");
-            return;
-        }
+        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
 
-        if (!user.equals(password)) {
-            loginText.setText("Incorrect password");
-            return;
-        }
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("home.fxml"));
-            Parent root = loader.load();
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
 
-            HomeController controller = loader.getController();
-            controller.setupAccess(username);
+            if (rs.next()) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("home.fxml"));
+                Parent root = loader.load();
 
-            Stage stage = (Stage) loginText.getScene().getWindow();
-            Scene scene = new Scene(root, 1200, 700);
-            stage.setTitle("Home Page");
-            stage.setResizable(true);
-            stage.setScene(scene);
-            stage.centerOnScreen();
+                HomeController controller = loader.getController();
+                controller.setupAccess(username);
 
-        } catch (IOException e) {
+                Stage stage = (Stage) loginText.getScene().getWindow();
+                Scene scene = new Scene(root, 1200, 700);
+                stage.setTitle("Home Dashboard");
+                stage.setScene(scene);
+                stage.centerOnScreen();
+            } else {
+                loginText.setText("Invalid username or password.");
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
-            loginText.setText("Error: Couldn't load Home Page");
+            loginText.setText("Database connection error. Is MySQL running?");
+        } catch (Exception e) {
+            e.printStackTrace();
+            loginText.setText("Error loading home dashboard.");
         }
     }
 }
