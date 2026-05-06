@@ -126,44 +126,15 @@ public class BookController {
 
     @FXML
     void add(ActionEvent event) {
-        String age = ((RadioButton) ageGroup.getSelectedToggle()).getText();
+        try {
+            if (!validateInputs()) {
+                new Alert(Alert.AlertType.ERROR, "Fill out all fields.").show();
+                return;
+            }
 
-        Book book = new Book(
-                ISBNFld.getText(),
-                TitleFld.getText(),
-                AuthorFld.getText(),
-                DateFld.getValue(),
-                GenreFld.getValue(),
-                age,
-                RatingFld.getValue(),
-                StockBox.isSelected(),
-                DescriptionFld.getText()
-        );
+            String age = ((RadioButton) ageGroup.getSelectedToggle()).getText();
 
-        bookStore.addBook(book);
-        clearFields();
-    }
-
-    @FXML
-    void delete(ActionEvent event) {
-        selectedBook = table.getSelectionModel().getSelectedItem();
-
-        if (selectedBook != null) {
-            bookStore.deleteBook(selectedBook);
-            clearFields();
-        }
-    }
-
-    @FXML
-    void update(ActionEvent event) {
-        selectedBook = table.getSelectionModel().getSelectedItem();
-
-        if (selectedBook != null) {
-            RadioButton selected = (RadioButton) ageGroup.getSelectedToggle();
-            String age = selected != null ? selected.getText() : "";
-
-            bookStore.updateBook(
-                    selectedBook,
+            Book book = new Book(
                     ISBNFld.getText(),
                     TitleFld.getText(),
                     AuthorFld.getText(),
@@ -175,8 +146,68 @@ public class BookController {
                     DescriptionFld.getText()
             );
 
+            bookStore.addBook(book);
             clearFields();
-            table.refresh();
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("ISBN already exists.")) {
+                ISBNFld.requestFocus();
+                new Alert(Alert.AlertType.ERROR, "ISBN already exists in database.").show();
+            } else {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    void delete(ActionEvent event) {
+        selectedBook = table.getSelectionModel().getSelectedItem();
+
+        if (selectedBook != null) {
+            bookStore.deleteBook(selectedBook);
+            clearFields();
+            table.getSelectionModel().clearSelection();
+            selectedBook = null;
+        }
+    }
+
+    @FXML
+    void update(ActionEvent event) {
+        selectedBook = table.getSelectionModel().getSelectedItem();
+
+        try {
+            if (selectedBook != null) {
+                if (!validateInputs()) {
+                    new Alert(Alert.AlertType.ERROR, "Fill out all fields.").show();
+                    return;
+                }
+
+                RadioButton selected = (RadioButton) ageGroup.getSelectedToggle();
+                String age = selected != null ? selected.getText() : "";
+
+                bookStore.updateBook(
+                        selectedBook,
+                        ISBNFld.getText(),
+                        TitleFld.getText(),
+                        AuthorFld.getText(),
+                        DateFld.getValue(),
+                        GenreFld.getValue(),
+                        age,
+                        RatingFld.getValue(),
+                        StockBox.isSelected(),
+                        DescriptionFld.getText()
+                );
+
+                clearFields();
+                table.getSelectionModel().clearSelection();
+                selectedBook = null;
+            }
+        } catch(RuntimeException e) {
+            if (e.getMessage().contains("ISBN already exists.")) {
+                ISBNFld.requestFocus();
+                new Alert(Alert.AlertType.ERROR, "ISBN already exists in database.").show();
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -192,5 +223,26 @@ public class BookController {
         ageGroup.selectToggle(age1);
         selectedBook = null;
         StockBox.setSelected(false);
+    }
+
+    private boolean validateInputs() {
+        if (ISBNFld.getText().isEmpty()) {
+            ISBNFld.requestFocus();
+            return false;
+        }
+        if (TitleFld.getText().isEmpty()) {
+            TitleFld.requestFocus();
+            return false;
+        }
+        if (AuthorFld.getText().isEmpty()) {
+            AuthorFld.requestFocus();
+            return false;
+        }
+        if (DateFld.getValue() == null) {
+            DateFld.requestFocus();
+            return false;
+        }
+
+        return true;
     }
 }

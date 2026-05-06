@@ -2,39 +2,98 @@ package workshop.project.carl;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import workshop.project.DatabaseConnection;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class BookStore {
     private final ObservableList<Book> books = FXCollections.observableArrayList();
 
     public BookStore() {
-        this.books.addAll(
-                (new Book("9780152023980", "The Little Prince", "Antoine de Saint-Exupéry", LocalDate.parse("1943-04-06"), Genre.Fantasy, "5-8", 5.0, true, "A pilot stranded in the desert meets a mysterious young boy who calls himself the Little Prince. As the boy shares stories of his travels from planet to planet, he reveals simple yet profound truths about friendship, love, loneliness, and what truly matters in life. Through their encounter, the pilot comes to see the world through the eyes of a child—and learns that what is essential is invisible to the eye.")),
-                (new Book("9780062315007", "The Alchemist", "Paulo Coelho", LocalDate.parse("1993-05-01"), Genre.Fantasy, "13-18", 3.92, false, "The Alchemist follows Santiago, a young Andalusian shepherd who repeatedly dreams of a hidden treasure buried near the Egyptian pyramids. Motivated by this vision, he leaves Spain and embarks on a journey across North Africa in search of his “Personal Legend” — his life’s true purpose.\nAlong the way, he encounters a series of figures who shape his understanding of the world, including a king, a crystal merchant, an Englishman studying alchemy, and an alchemist. Through these encounters, Santiago learns to interpret the language of the world, trust his intuition, and recognize that the journey itself is as meaningful as the destination.\nAt its core, the story explores themes of destiny, spirituality, and self-discovery, emphasizing that when a person truly wants something, the universe conspires to help them achieve it."))
-        );
+        loadBooks();
     }
-
 
     public ObservableList<Book> getBooksList() {
         return books;
     }
 
     public void addBook(Book book) {
-        if(book != null) {
-            this.books.add(book);
+        if (book == null) return;
+
+        String query = "INSERT INTO books VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, book.getIsbn());
+            stmt.setString(2, book.getTitle());
+            stmt.setString(3, book.getAuthor());
+            stmt.setDate(4, java.sql.Date.valueOf(book.getReleaseDate()));
+            stmt.setString(5, book.getGenre().name());
+            stmt.setString(6, book.getAgeGroup());
+            stmt.setDouble(7, book.getRating());
+            stmt.setBoolean(8, book.isInStock());
+            stmt.setString(9, book.getDescription());
+
+            stmt.executeUpdate();
+            books.add(book);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("Duplicate entry")) {
+                throw new RuntimeException("ISBN already exists.");
+            }
+
+            throw new RuntimeException(e);
         }
     }
 
     public void deleteBook(Book book) {
-        if (book != null) {
-            this.books.remove(book);
+        if (book == null) return;
+
+        String query = "DELETE FROM books WHERE isbn = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, book.getIsbn());
+            stmt.executeUpdate();
+
+            books.remove(book);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public void updateBook(Book book, String isbn, String title, String author,LocalDate releaseDate,
                              Genre genre, String ageGroup, double rating, boolean inStock, String description) {
-        if (book != null) {
+        if (book == null) return;
+
+        String query = """
+                UPDATE books
+                SET isbn=?, title=?, author=?, release_date=?, genre=?,
+                    age_group=?, rating=?, in_stock=?, description=?
+                WHERE isbn=?
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, isbn);
+            stmt.setString(2, title);
+            stmt.setString(3, author);
+            stmt.setDate(4, java.sql.Date.valueOf(releaseDate));
+            stmt.setString(5, genre.name());
+            stmt.setString(6, ageGroup);
+            stmt.setDouble(7, rating);
+            stmt.setBoolean(8, inStock);
+            stmt.setString(9, description);
+            stmt.setString(10, book.getIsbn());
+
+            stmt.executeUpdate();
+
             book.setIsbn(isbn);
             book.setTitle(title);
             book.setAuthor(author);
@@ -44,6 +103,40 @@ public class BookStore {
             book.setRating(rating);
             book.setInStock(inStock);
             book.setDescription(description);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("Duplicate entry")) {
+                throw new RuntimeException("ISBN already exists.");
+            }
+
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadBooks() {
+        String query = "SELECT * FROM books";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery();) {
+
+            while (rs.next()) {
+                Book book = new Book(
+                        rs.getString("isbn"),
+                        rs.getString("title"),
+                        rs.getString("author"),
+                        rs.getDate("release_date").toLocalDate(),
+                        Genre.valueOf(rs.getString("genre")),
+                        rs.getString("age_group"),
+                        rs.getDouble("rating"),
+                        rs.getBoolean("in_stock"),
+                        rs.getString("description")
+                );
+
+                books.add(book);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
