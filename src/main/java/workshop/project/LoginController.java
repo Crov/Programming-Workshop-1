@@ -14,6 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.security.MessageDigest;
+
 public class LoginController {
 
     @FXML private TextField usernameField;
@@ -29,13 +31,13 @@ public class LoginController {
             return;
         }
 
-        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String query = "SELECT * FROM accounts WHERE username = ? AND password_hash = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, username);
-            stmt.setString(2, password);
+            stmt.setString(2, hash(password));
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -60,6 +62,24 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
             loginText.setText("Error loading home dashboard.");
+        }
+    }
+
+    private String hash(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(password.getBytes());
+
+            StringBuilder hex = new StringBuilder();
+
+            for (byte b : bytes) {
+                hex.append(String.format("%02x", b));
+            }
+
+            return hex.toString();
+
+        } catch (Exception e) {
+            return "";
         }
     }
 }
